@@ -5,7 +5,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>f9a6b182-2ac3-4a41-ad0e-fbfaa6256626</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>espider.py</StartupFile>
+    <StartupFile>
+    </StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,18 +22,25 @@
     <DebugSymbols>true</DebugSymbols>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="espider.py" />
-    <Compile Include="setup.py" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="LICENSE" />
-    <Content Include="README.md" />
-  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="config.py" />
+    <Compile Include="config_default.py" />
+    <Compile Include="httphandler.py" />
+    <Compile Include="log.py" />
+    <Compile Include="mysql.py" />
+    <Compile Include="parser.py" />
+    <Compile Include="proxy.py" />
+    <Compile Include="selephan.py" />
+    <Compile Include="spider.py" />
+    <Compile Include="util.py" />
+    <Compile Include="__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
   <Import Condition="Exists($(PtvsTargetsFile))" Project="$(PtvsTargetsFile)" />
   <Import Condition="!Exists($(PtvsTargetsFile))" Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
