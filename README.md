@@ -39,7 +39,7 @@ JavaScript, this tool is best for you. For furthor desciption, please view [phan
     * Additionally, because selenium designs its phantomjs webdriver without configurable proxy, I modified its code 
     to surport proxy. You just need to change `selenium/webdriver/phantomjs/webdriver.py` like this:  
     from  
-    ```
+    ```python
     def __init__(self, executable_path="phantomjs",
                  port=0, desired_capabilities=DesiredCapabilities.PHANTOMJS,
                  service_args=None, service_log_path=None):  
@@ -51,7 +51,7 @@ JavaScript, this tool is best for you. For furthor desciption, please view [phan
                     desired_capabilities=desired_capabilities)
     ```  
     to  
-    ```
+    ```python
     def __init__(self, executable_path="phantomjs",
                  port=0, desired_capabilities=DesiredCapabilities.PHANTOMJS,
                  service_args=None, service_log_path=None, proxy=None):  
@@ -63,5 +63,15 @@ JavaScript, this tool is best for you. For furthor desciption, please view [phan
                     desired_capabilities=desired_capabilities,
                     proxy=proxy)
     ```  
-    which means add one parameter to defination of webdriver.
-* 
+    which means add one parameter to defination of webdriver.  
+# Install  
+Espider is easy to install with a *setup.py*. First, download espider project. Then, switch to `espider/espider` catalogue. Finally, use `python install  
+# What can I do with espider?  
+Espider can automaticly huge amount of scribe web sources with just a few lines of codes to design. It can use proxy and dynamic parsing method to handle ip restrict and anti-scribing issues.  
+Espider have two procedures-- web spider and content parser. Web spider wil start with a starting url and then use rules that you define to analyse catalogue and download all the required web source to you hard disk. Content parser wil parse stored web source and extract needed infomation to file or mysql.
+Surpportted web source type includes html, xml, json, images like jpg, bmp, tif, videos like avi, mp4, audios like mp3. For furthor infomation, please refer to *TODO*  
+
+![](https://github.com/MeteorKepler/espider/raw/master/artworks/mainproc.jpg)  
+
+# Get started  
+There are several examples in `test/` folder you could refer to. Generally speaking, you should build a class that inherit `espider.spider.BaseSpider`. Then you should define 
