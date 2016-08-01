@@ -7,8 +7,7 @@
     <ProjectHome>.</ProjectHome>
     <StartupFile>
     </StartupFile>
-    <SearchPath>
-    </SearchPath>
+    <SearchPath>.</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>espider</Name>
@@ -27,19 +26,33 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="config.py" />
-    <Compile Include="config_default.py" />
-    <Compile Include="httphandler.py" />
-    <Compile Include="log.py" />
-    <Compile Include="mysql.py" />
-    <Compile Include="parser.py" />
-    <Compile Include="proxy.py" />
-    <Compile Include="selephan.py" />
-    <Compile Include="spider.py" />
-    <Compile Include="util.py" />
-    <Compile Include="__init__.py">
+    <Compile Include="espider\config.py" />
+    <Compile Include="espider\config_default.py" />
+    <Compile Include="espider\tools\proxyupdate.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="espider\tools\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="espider\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="espider\httphandler.py" />
+    <Compile Include="espider\log.py" />
+    <Compile Include="espider\mysql.py" />
+    <Compile Include="espider\parser.py" />
+    <Compile Include="espider\proxy.py" />
+    <Compile Include="espider\selephan.py" />
+    <Compile Include="espider\spider.py" />
+    <Compile Include="espider\test.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="espider\util.py" />
+    <Compile Include="setup.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="espider\" />
+    <Folder Include="espider\tools\" />
   </ItemGroup>
   <Import Condition="Exists($(PtvsTargetsFile))" Project="$(PtvsTargetsFile)" />
   <Import Condition="!Exists($(PtvsTargetsFile))" Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
