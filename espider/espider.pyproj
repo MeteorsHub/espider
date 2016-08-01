@@ -7,11 +7,14 @@
     <ProjectHome>.</ProjectHome>
     <StartupFile>
     </StartupFile>
-    <SearchPath>.</SearchPath>
+    <SearchPath>
+    </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>espider</Name>
     <RootNamespace>espider</RootNamespace>
+    <InterpreterId>{9a7a9026-48c1-4688-9d5d-e5699d47d074}</InterpreterId>
+    <InterpreterVersion>3.5</InterpreterVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,15 +47,19 @@
     <Compile Include="espider\proxy.py" />
     <Compile Include="espider\selephan.py" />
     <Compile Include="espider\spider.py" />
-    <Compile Include="espider\test.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="espider\util.py" />
     <Compile Include="setup.py" />
+    <Compile Include="test\Lianjia\config_override.py" />
+    <Compile Include="test\Lianjia\lianjia.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="espider\" />
     <Folder Include="espider\tools\" />
+    <Folder Include="test\" />
+    <Folder Include="test\Lianjia\" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="{9a7a9026-48c1-4688-9d5d-e5699d47d074}\3.5" />
   </ItemGroup>
   <Import Condition="Exists($(PtvsTargetsFile))" Project="$(PtvsTargetsFile)" />
   <Import Condition="!Exists($(PtvsTargetsFile))" Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
