@@ -3,13 +3,20 @@ A simply constructed web crawling and scrabing framework that is easy to use
 
 ![](https://github.com/MeteorKepler/espider/raw/master/artworks/spider-web.jpg)  
 
+## What can I do with espider?  
+Espider can automaticly huge amount of scribe web sources with just a few lines of codes to design. It can use proxy and dynamic parsing method to handle ip restrict and anti-scribing issues.  
+Espider have two procedures-- web spider and content parser. Web spider wil start with a starting url and then use rules that you define to analyse catalogue and download all the required web source to you hard disk. Content parser wil parse stored web source and extract needed infomation to file or mysql.
+Surpportted web source type includes html, xml, json, images like jpg, bmp, tif, videos like avi, mp4, audios like mp3. For furthor infomation, please refer to *TODO*  
+
+![](https://github.com/MeteorKepler/espider/raw/master/artworks/mainproc.jpg)  
+
 ## Environment  
 Because of getting start with python not so familiarly and the project is just a begining, I have only tested the project in specific environment below. 
 Some errors may occur running in different environment. Better capatibility will be modified in later version.
 * os: windows 7-64bit
 * python version: 3.5  
 
-## Requirements
+## Requirements  
 Espider uses some open sourse lib, you should install them before using.
 * pymysql:   
 Espider.parser will use pymysql to save data to mysql.  
@@ -67,12 +74,7 @@ JavaScript, this tool is best for you. For furthor desciption, please view [phan
 
 ## Install  
 Espider is easy to install with a *setup.py*. First, download espider project. Then, switch to `espider/espider` catalogue. Finally, use `python install  
-## What can I do with espider?  
-Espider can automaticly huge amount of scribe web sources with just a few lines of codes to design. It can use proxy and dynamic parsing method to handle ip restrict and anti-scribing issues.  
-Espider have two procedures-- web spider and content parser. Web spider wil start with a starting url and then use rules that you define to analyse catalogue and download all the required web source to you hard disk. Content parser wil parse stored web source and extract needed infomation to file or mysql.
-Surpportted web source type includes html, xml, json, images like jpg, bmp, tif, videos like avi, mp4, audios like mp3. For furthor infomation, please refer to *TODO*  
 
-![](https://github.com/MeteorKepler/espider/raw/master/artworks/mainproc.jpg)  
 
 ## Get started  
 There are several examples in `test/` folder you could refer to. Generally speaking, you should build a class that inherit `espider.spider.BaseSpider`. Then you should define 
