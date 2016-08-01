@@ -55,5 +55,5 @@ class LianjiaParser(HtmlParser):
 myEspider = LianjiaSpider()
 myEspider.startEspider()
 
-# myParser = LianjiaParser(primaryKey='name')
-# myParser.startParseContent()
+myParser = LianjiaParser(primaryKey='name')
+myParser.startParseContent()
