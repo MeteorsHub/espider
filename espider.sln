@@ -5,9 +5,11 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "espider", "espider\espider.pyproj", "{F9A6B182-2AC3-4A41-AD0E-FBFAA6256626}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Lianjia", "test\Lianjia.pyproj", "{4B6444FB-D249-4F1F-9437-CF8D18F04C2A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{860B498D-4201-423F-8590-7EF0654A2537}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5D50B085-D50E-488E-8791-CD6C12CDFC03}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,13 +19,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F9A6B182-2AC3-4A41-AD0E-FBFAA6256626}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F9A6B182-2AC3-4A41-AD0E-FBFAA6256626}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4B6444FB-D249-4F1F-9437-CF8D18F04C2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4B6444FB-D249-4F1F-9437-CF8D18F04C2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{4B6444FB-D249-4F1F-9437-CF8D18F04C2A} = {860B498D-4201-423F-8590-7EF0654A2537}
 	EndGlobalSection
 EndGlobal
