@@ -20,7 +20,12 @@ from espider.util import *
 
 
 class BaseParser(object):
+    parserName = ''
+
     def __init__(self, contentType, primaryKey = None, contentPath = config.configs.spider.contentdatapath, openMethod = 'rb', openEncoding = None):
+        if parserName == '':
+            Logger.warning('You should define parserName for your parser! Espider is shutting down...')
+            exit(1)
         self.contentType = contentType
         self.contentPath = contentPath
         self.fileList = getFileList(contentPath)

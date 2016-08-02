@@ -40,7 +40,7 @@ configs = {
         'sleeptime':1,
         'timeout':5,
         'retry':3,
-        'proxy':True,
+        'proxy':False,
         'selephan':False
     },
     'selephan':{

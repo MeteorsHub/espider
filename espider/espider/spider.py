@@ -15,7 +15,7 @@ import os
 import shutil
 import random
 import time
-from urllib.parse import urlparse, quote
+from urllib.parse import urlparse, quote, urljoin, urlunparse
 from urllib import request
 from lxml import etree
 import json
@@ -26,16 +26,20 @@ from espider.util import *
 
 
 class BaseSpider(object):
-    __slots__ = ('startUrl', 'host', 'httpHandler', 'catalogueUrl', 'contentUrl', 'catalogueCount', 'contentCount')
-    espiderName = 'basicEspider'
+    __slots__ = ('host', 'httpHandler', 'catalogueUrl', 'contentUrl', 'catalogueCount', 'contentCount')
+    espiderName = ''
+    startUrl = ''
 
-    def __init__(self, startUrl):
+    def __init__(self):
         Logger.info('espider %s initiating...' %self.espiderName)
-        if urlparse(startUrl).hostname == None:
+        if self.startUrl == '' or self.startUrl == '':
+            Logger.critical('Your espider should have an espiderName and a startUrl! Espider is shutting down...')
+            exit(1)
+        self.startUrl = urlunparse(urlparse(self.startUrl, 'http'))
+        if urlparse(self.startUrl).hostname == None:
             Logger.critical('Illegal url! Please make sure url like "http://www.baidu.com". Espider will be closed...')
             exit(1)
-        self.host = urlparse(startUrl).scheme + '://' +urlparse(startUrl).hostname
-        self.startUrl = startUrl
+        self.host = urlparse(self.startUrl).scheme + '://' +urlparse(self.startUrl).hostname
         self.httpHandler = HttpHandler(self.host)
         if not os.path.exists(config.configs.spider.pipelinepath):
             os.makedirs(config.configs.spider.pipelinepath)
@@ -61,8 +65,7 @@ class BaseSpider(object):
         if config.configs.spider.catalogueLimit != 'inf':
             if self.catalogueCount >= config.configs.spider.catalogueLimit:
                 return
-        if urlparse(url).hostname == None:
-            url = self.host +url
+        url = urljoin(self.host, url)
         urllistContent = []
         urllistCatalogue = []
         for i in range(config.configs.spider.retry):
@@ -109,8 +112,7 @@ class BaseSpider(object):
         exit(1)
 
     def contentHandler(self, url, count):
-        if urlparse(url).hostname == None:
-            url = self.host +url
+        url = urljoin(self.host, url)
         Logger.info('(%s%%)get content data from %s' %(round(100*count/len(self.contentUrl), 2), url))
         data = None
         type = ''

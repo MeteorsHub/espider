@@ -20,10 +20,7 @@ from espider.parser import HtmlParser
 class LianjiaSpider(BaseSpider):
 
     espiderName = 'LianjiaSpider'
-
-    def __init__(self):
-        startUrl = 'http://bj.lianjia.com/xiaoqu/'
-        super(LianjiaSpider, self).__init__(startUrl)
+    startUrl = 'http://bj.lianjia.com/xiaoqu/'
 
     def getUrlList(self, response):
         data = response.read().decode('utf8')
@@ -43,6 +40,8 @@ class LianjiaSpider(BaseSpider):
         return (catalogueUrllist, contentUrllist)
 
 class LianjiaParser(HtmlParser):
+    parserName = 'LianjiaParser'
+
     def parseContent(self, data):
         dataList = []
         primaryKey = 'name'

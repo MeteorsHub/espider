@@ -1,0 +1,5 @@
+/ocean/photos/oceans-galleries-main/
+/ocean/ocean-life/
+/ocean/protect/
+/ocean/underwater-exploration/
+/ocean/
