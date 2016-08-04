@@ -33,12 +33,14 @@ class HttpHandler(object):
             from espider.selephan import SelePhan
             self.selephan = SelePhan(self.proxy)
 
-    def getResponseByUrl(self, url):
+    def getResponseByUrl(self, url, headers={}):
         if urlparse(url).hostname == None:
             Logger.error('url of request illegal! which is %s' %url)
             return None
         req = urllib.request.Request(url)
         for k,v in config.configs.urlrequest.items():
+            req.add_header(k,v)
+        for k,v in headers.items():
             req.add_header(k,v)
         flag = False
         for i in range(config.configs.http.retry):

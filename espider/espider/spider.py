@@ -19,6 +19,7 @@ from urllib.parse import urlparse, quote, urljoin, urlunparse
 from urllib import request
 from lxml import etree
 import json
+from collections import OrderedDict
 
 from espider.httphandler import HttpHandler
 from espider.log import *
@@ -32,7 +33,7 @@ class BaseSpider(object):
 
     def __init__(self):
         Logger.info('espider %s initiating...' %self.espiderName)
-        if self.startUrl == '' or self.startUrl == '':
+        if self.startUrl == '' or self.espiderName == '':
             Logger.critical('Your espider should have an espiderName and a startUrl! Espider is shutting down...')
             exit(1)
         self.startUrl = urlunparse(urlparse(self.startUrl, 'http'))
@@ -183,19 +184,21 @@ class BaseSpider(object):
         return (response.read(), '')
 
 class UrlQuerySpider(BaseSpider):
-    __slots__ = ('host', 'baseUrl', 'queryList', 'parameterList','extraParameter' 'level')
+    __slots__ = ('host', 'level')
+    queryList = []
+    parameterList = []
+    extraParameter = OrderedDict()
 
-    def __init__(self, baseUrl, queryList, parameterList, extraParameter = {}):
+    def __init__(self):
         Logger.info('Espider %s initiating...' %self.espiderName)
-        if urlparse(baseUrl).hostname == None:
+        if self.startUrl == '':
+            Logger.critical('Your espider should have a startUrl! Espider is shutting down...')
+            exit(1)
+        self.startUrl = urlunparse(urlparse(self.startUrl, 'http'))
+        if urlparse(self.startUrl).hostname == None:
             Logger.critical('Illegal url! Please make sure url like "http://www.baidu.com". Espider will be closed...')
             exit(1)
-        self.host = urlparse(baseUrl).scheme + '://' +urlparse(baseUrl).hostname
-        self.baseUrl = baseUrl
-        self.queryList = queryList
-        self.parameterList = parameterList
-        self.extraParameter = extraParameter
-        self.level = 1
+        self.host = urlparse(self.startUrl).scheme + '://' +urlparse(self.startUrl).hostname
         self.checkUrlQuery()
         self.httpHandler = HttpHandler(self.host)
 
@@ -203,7 +206,8 @@ class UrlQuerySpider(BaseSpider):
         Logger.info('starting espider...')
         paramList = readLinesFile(config.configs.spider.contentdatapath + 'param.txt')
         if paramList == None:
-            return
+            Logger.critical('You should create starting parameters in %s' %(config.configs.spider.contentdatapath + 'param.txt'))
+            exit(1)
         for i in range(len(paramList)):
             paramList[i] = json.loads(paramList[i])
             for k,v in paramList[i].items():
@@ -220,39 +224,12 @@ class UrlQuerySpider(BaseSpider):
         if not os.path.exists(path):
             os.makedirs(path)
         Logger.info('(level %s)start to scrab param:%s' %(level, param))
-        if isinstance(self.queryList[level - 1], list):
-            for query in self.queryList[level - 1]:
-                url = self.buildUrl(query, param)
-                response = self.httpHandler.getResponseByUrl(url)
-                data, type = self.contentResponseHandle(response)
-                with open(path + 'data_query=' + query + '.' + type, 'w+', encoding='utf8') as f:
-                    f.write(data)
-                if level == self.level:
-                    continue
-                nextParamList = self.contentHandler(data)
-                if nextParamList == None or nextParamList == []:
-                    return
-                if not isinstance(nextParamList, list):
-                    Logger.critical('contentHandler() should return a list. Espider is shutting down...')
-                    exit(1)
-                if not isinstance(nextParamList[0], dict):
-                    Logger.critical('contentHandler() should return list made by dict of each element. Espider is shutting down...')
-                    exit(1)
-                writeLinesFile(path + 'param_query='+ query + '.txt', nextParamList)
-                for nextParam in nextParamList:
-                    for k,v in nextParam:
-                        if k in self.parameterList[level]:
-                            nextParamDict = param
-                            nextParamDict[k] = v
-                            nextPath = path + k + '=' + v + '/'
-                            time.sleep(random.random()*config.configs.http.sleeptime)
-                            self.catalogueUrlRecursion(nextParamDict, nextPath, level + 1)
-                        else:
-                            Logger.error('param.txt gives an incorrect key %s compared to self.paramterList(level %s)...' %(k, level))
-        else:
-            query = self.queryList[level - 1]
+        if not isinstance(self.queryList[level - 1], list):
+            self.queryList[level - 1] = [self.queryList[level - 1]]
+        for query in self.queryList[level - 1]:
             url = self.buildUrl(query, param)
-            response = self.httpHandler.getResponseByUrl(url)
+            url, headers = self.buildExtraHeaders(url)
+            response = self.httpHandler.getResponseByUrl(url, headers=headers)
             data, type = self.contentResponseHandle(response)
             with open(path + 'data_query=' + query + '.' + type, 'w+', encoding='utf8') as f:
                 f.write(data)
@@ -281,7 +258,7 @@ class UrlQuerySpider(BaseSpider):
                         time.sleep(random.random()*config.configs.http.sleeptime)
                         self.catalogueUrlRecursion(nextParamDict, nextPath, level + 1)
                     else:
-                        Logger.error('param.txt gives an incorrect key %s compared to self.paramterList(level %s)...' %(k, level))
+                        pass
 
 
     def contentHandler(self, data):
@@ -295,25 +272,28 @@ class UrlQuerySpider(BaseSpider):
             queryList.append(k + '=' + v)
         for k,v in param.items():
             queryList.append(k + '=' + v)
-        url = self.baseUrl + query + '?' + '&'.join(queryList)
+        url = self.startUrl + query + '?' + '&'.join(queryList)
         return url
+
+    def buildExtraHeaders(self, url):
+        return (url, {})
 
 
 
     def checkUrlQuery(self):
-        if not isinstance(self.queryList, list):
-            Logger.critical('Illegal queryList, you need define it as a list. Espider is shutting down...')
+        if not isinstance(self.queryList, list) or len(self.queryList) == 0:
+            Logger.critical('Please define queryList as a non-empty list! Espider is shutting down...')
             exit(1)
-        if not isinstance(self.parameterList, list):
-            Logger.critical('Illegal parameterList, you need define it as a list. Espider is shutting down...')
+        if not isinstance(self.parameterList, list) or len(self.parameterList) == 0:
+            Logger.critical('Please define parameterList as a non-empth list! Espider is shutting down...')
+            exit(1)
+        if not isinstance(self.extraParameter, OrderedDict):
+            Logger.critical('extraParameter should be OrderedDict! Espider is shutting down')
             exit(1)
         if len(self.queryList) != len(self.parameterList):
             Logger.critical('Different length of queryList and parameterList, please make sure they match each other. Espider is shutting down...')
             exit(1)
         self.level = len(self.queryList)
-        if not isinstance(self.extraParameter, dict):
-            Logger.critical('Illegal extraParameter, you need define it as a dict. Espider is shutting down...')
-            exit(1)
 
 class GsExtractor(object):
     def _init_(self):
