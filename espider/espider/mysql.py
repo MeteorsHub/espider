@@ -5,7 +5,12 @@
     espider.mysql
     ------------------------------------------------------------
 
-    This file is about operating mysql database
+    This file is about operating mysql database.
+    It provide basic operation of sql including 'CREATE TABLE', 'SELECT' and 
+    an additional function about INSERT with UPDATE.
+
+    :Copyright (c) 2016 MeteorKepler
+    :license: MIT, see LICENSE for more details.
 
 """
 
@@ -15,10 +20,22 @@ import pymysql
 import warnings
 warnings.filterwarnings("ignore")
 
-from espider.log import *
-from espider.config import *
+from espider.config import configs
+from espider.log import Logger
+
+__all__ = [
+    'Mysql',
+    ]
 
 class Mysql(object):
+
+    """
+        This class will use configs to create a connection to mysql.
+        Providing basic operations including 'CREATE TABLE', 'SELECT' and 
+        an additional function about INSERT with UPDATE which will automatically 
+        judge whether the tuple is already in database and update it if so.
+    """
+
     def __init__(self, table, keyList, primaryKey = None):
         self.table = table
         self.keyList = keyList
@@ -42,7 +59,7 @@ class Mysql(object):
         sql = 'SELECT %s FROM %s' %(temp, self.table)
         result = list(self.__sqlExecute(sql))
         if selectKeyList == None:
-            sql = "select COLUMN_NAME from information_schema.COLUMNS where table_name = '%s' and table_schema = '%s'" %(self.table, config.configs.mysql.db)
+            sql = "select COLUMN_NAME from information_schema.COLUMNS where table_name = '%s' and table_schema = '%s'" %(self.table, configs.mysql.db)
             selectKeyList = list(self.__sqlExecute(sql))
             for i in range(len(selectKeyList)):
                 selectKeyList[i] = selectKeyList[i][0]
@@ -95,7 +112,7 @@ class Mysql(object):
     def __sqlExecute(self,sql):
         data = None
         try:
-            connection = pymysql.connect(host = config.configs.mysql.host, user = config.configs.mysql.user, password = config.configs.mysql.password, db = config.configs.mysql.db, charset = 'utf8')
+            connection = pymysql.connect(host = configs.mysql.host, port = configs.mysql.port, user = configs.mysql.user, password = configs.mysql.password, db = configs.mysql.db, charset = 'utf8')
             try:
                 with connection.cursor() as cur:
                     cur.execute(sql)

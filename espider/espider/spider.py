@@ -6,6 +6,10 @@
     ------------------------------------------------------------
 
     This file is used to scrab objective url and save as file
+    Also provides class that manipulate UrlQuery spider.
+
+    :Copyright (c) 2016 MeteorKepler
+    :license: MIT, see LICENSE for more details.
 
 """
 
@@ -22,17 +26,30 @@ import json
 from collections import OrderedDict
 
 from espider.httphandler import HttpHandler
-from espider.log import *
 from espider.util import *
+from espider.config import configs
+from espider.log import Logger
+
+__all__ = [
+    'BaseSpider',
+    'UrlQuerySpider',
+    'GsExtractor',
+    ]
 
 
 class BaseSpider(object):
+    """
+        Basic spider that needs defination of espiderName and startUrl.
+        Also need to override getUrlList().
+        You can also override buildExtraHeaders() but this is not necessary which aims to add 
+        different headers according to different url.
+    """
     __slots__ = ('host', 'httpHandler', 'catalogueUrl', 'contentUrl', 'catalogueCount', 'contentCount')
     espiderName = ''
     startUrl = ''
 
     def __init__(self):
-        Logger.info('espider %s initiating...' %self.espiderName)
+        Logger.info('espider %s initiating...' % self.espiderName)
         if self.startUrl == '' or self.espiderName == '':
             Logger.critical('Your espider should have an espiderName and a startUrl! Espider is shutting down...')
             exit(1)
@@ -40,10 +57,10 @@ class BaseSpider(object):
         if urlparse(self.startUrl).hostname == None:
             Logger.critical('Illegal url! Please make sure url like "http://www.baidu.com". Espider will be closed...')
             exit(1)
-        self.host = urlparse(self.startUrl).scheme + '://' +urlparse(self.startUrl).hostname
+        self.host = urlparse(self.startUrl).scheme + '://' + urlparse(self.startUrl).hostname
         self.httpHandler = HttpHandler(self.host)
-        if not os.path.exists(config.configs.spider.pipelinepath):
-            os.makedirs(config.configs.spider.pipelinepath)
+        if not os.path.exists(configs.spider.pipelinepath):
+            os.makedirs(configs.spider.pipelinepath)
         self.catalogueUrl = set()
         self.catalogueCount = 0
         self.contentUrl = set()
@@ -53,8 +70,8 @@ class BaseSpider(object):
     def startEspider(self):
         Logger.info('start to get catalogue urls...')
         self.catalogueUrlRecursion(self.startUrl)
-        writeLinesFile(config.configs.spider.cataloguefilename, self.catalogueUrl, method='w+')
-        writeLinesFile(config.configs.spider.contentfilename, self.contentUrl, method='w+')
+        writeLinesFile(configs.spider.cataloguefilename, self.catalogueUrl, method='w+')
+        writeLinesFile(configs.spider.contentfilename, self.contentUrl, method='w+')
         count = 0
         for item in self.contentUrl:
             count = count + 1
@@ -63,16 +80,16 @@ class BaseSpider(object):
 
 
     def catalogueUrlRecursion(self, url):
-        if config.configs.spider.catalogueLimit != 'inf':
-            if self.catalogueCount >= config.configs.spider.catalogueLimit:
+        if configs.spider.catalogueLimit != 'inf':
+            if self.catalogueCount >= configs.spider.catalogueLimit:
                 return
         url = urljoin(self.host, url)
         urllistContent = []
         urllistCatalogue = []
-        for i in range(config.configs.spider.retry):
+        for i in range(configs.spider.retry):
             response = self.httpHandler.getResponseByUrl(url)
             if response == None:
-                Logger.warning('cannot get url %s. please check httphandler...' %url)
+                Logger.warning('cannot get url %s. please check httphandler...' % url)
                 return
             try:
                 urllistCatalogue, urllistContent = self.getUrlList(response)
@@ -86,24 +103,24 @@ class BaseSpider(object):
         if(len(urllistContent) != 0):
             for item in urllistContent:
                 self.contentCount = self.contentCount + 1
-                if config.configs.spider.contentLimit != 'inf':
-                    if self.contentCount >= config.configs.spider.contentLimit:
+                if configs.spider.contentLimit != 'inf':
+                    if self.contentCount >= configs.spider.contentLimit:
                         break
                 if not item in self.contentUrl:
-                    Logger.debug('discover content url %s' %item)
+                    Logger.debug('discover content url %s' % item)
                     self.contentUrl.add(item)
         if len(urllistCatalogue) == 0:
             return
         else:
             for item in urllistCatalogue:
                 if not item in self.catalogueUrl:
-                    if config.configs.spider.catalogueLimit != 'inf':
-                        if self.catalogueCount >= config.configs.spider.catalogueLimit:
+                    if configs.spider.catalogueLimit != 'inf':
+                        if self.catalogueCount >= configs.spider.catalogueLimit:
                             return
-                    Logger.info('get catalogue url %s' %item)
+                    Logger.info('get catalogue url %s' % item)
                     self.catalogueUrl.add(item)
                     self.catalogueCount = self.catalogueCount + 1
-                    time.sleep(random.random()*config.configs.http.sleeptime)
+                    time.sleep(random.random() * configs.http.sleeptime)
                     self.catalogueUrlRecursion(item)
             return
 
@@ -114,14 +131,14 @@ class BaseSpider(object):
 
     def contentHandler(self, url, count):
         url = urljoin(self.host, url)
-        Logger.info('(%s%%)get content data from %s' %(round(100*count/len(self.contentUrl), 2), url))
+        Logger.info('(%s%%)get content data from %s' % (round(100 * count / len(self.contentUrl), 2), url))
         data = None
         type = ''
         name = None
-        for i in range(config.configs.spider.retry):
+        for i in range(configs.spider.retry):
             response = self.httpHandler.getResponseByUrl(url)
             if response == None:
-                Logger.warning('cannot get url %s. please check httphandler...' %url)
+                Logger.warning('cannot get url %s. please check httphandler...' % url)
                 return
             try:
                 name = self.contentFileName(response)
@@ -130,28 +147,31 @@ class BaseSpider(object):
                 Logger.error('an error occured in getUrlList(). if this take place very often, please check your code')
                 self.httpHandler.nextHandler()
         if name == None:
-            name = '%s.' %count + type
+            name = '%s.' % count + type
         if data == None:
             return
-        if not os.path.exists(config.configs.spider.contentdatapath):
-            os.makedirs(config.configs.spider.contentdatapath)
+        if not os.path.exists(configs.spider.contentdatapath):
+            os.makedirs(configs.spider.contentdatapath)
         try:
             if type == 'html' or type == 'xml' or type == 'json' or type == 'js' or type == 'css':
-                with open(config.configs.spider.contentdatapath + name, 'w+', encoding='utf8') as f:
+                with open(configs.spider.contentdatapath + name, 'w+', encoding='utf8') as f:
                     f.write(data)
                 return
             if type == 'jpg' or type == 'tif' or type == 'ico' or type == 'png' or type == 'bmp' or type == 'mp3' or type == 'avi' or type == 'mp4':
-                with open(config.configs.spider.contentdatapath + name, 'wb+') as f:
+                with open(configs.spider.contentdatapath + name, 'wb+') as f:
                     f.write(data)
                 return
-            with open(config.configs.spider.contentdatapath + name, 'wb+') as f:
+            with open(configs.spider.contentdatapath + name, 'wb+') as f:
                 f.write(data)
         except OSError:
-            Logger.error('anerrer occured when open %s' %config.configs.spider.contentdatapath + name)
+            Logger.error('anerrer occured when open %s' % configs.spider.contentdatapath + name)
         return
 
     def contentFileName(self, response):
         return None
+
+    def buildExtraHeaders(self, url):
+        return (url, {})
 
     def contentResponseHandle(self, response):
         type = response.getheader('Content-Type')
@@ -161,7 +181,7 @@ class BaseSpider(object):
             return (response.read().decode('utf8'), 'xml')
         if type == 'application/json':
             return (response.read().decode('utf8'), 'json')
-        if type == 'application/javascript' or  type == 'application/ecmascript':
+        if type == 'application/javascript' or type == 'application/ecmascript':
             return (response.read().decode('utf8'), 'js')
         if type == 'image/jpeg':
             return (response.read(), 'jpg')
@@ -184,13 +204,17 @@ class BaseSpider(object):
         return (response.read(), '')
 
 class UrlQuerySpider(BaseSpider):
+    """
+        Different objectives from BaseSpider.
+        Build url query in tree structure.
+    """
     __slots__ = ('host', 'level')
     queryList = []
     parameterList = []
     extraParameter = OrderedDict()
 
     def __init__(self):
-        Logger.info('Espider %s initiating...' %self.espiderName)
+        Logger.info('Espider %s initiating...' % self.espiderName)
         if self.startUrl == '':
             Logger.critical('Your espider should have a startUrl! Espider is shutting down...')
             exit(1)
@@ -198,15 +222,15 @@ class UrlQuerySpider(BaseSpider):
         if urlparse(self.startUrl).hostname == None:
             Logger.critical('Illegal url! Please make sure url like "http://www.baidu.com". Espider will be closed...')
             exit(1)
-        self.host = urlparse(self.startUrl).scheme + '://' +urlparse(self.startUrl).hostname
+        self.host = urlparse(self.startUrl).scheme + '://' + urlparse(self.startUrl).hostname
         self.checkUrlQuery()
         self.httpHandler = HttpHandler(self.host)
 
     def startEspider(self):
         Logger.info('starting espider...')
-        paramList = readLinesFile(config.configs.spider.contentdatapath + 'param.txt')
+        paramList = readLinesFile(configs.spider.contentdatapath + 'param.txt')
         if paramList == None:
-            Logger.critical('You should create starting parameters in %s' %(config.configs.spider.contentdatapath + 'param.txt'))
+            Logger.critical('You should create starting parameters in %s' % (configs.spider.contentdatapath + 'param.txt'))
             exit(1)
         for i in range(len(paramList)):
             paramList[i] = json.loads(paramList[i])
@@ -214,7 +238,7 @@ class UrlQuerySpider(BaseSpider):
                 if k in self.parameterList[0]:
                     param = {}
                     param[k] = v
-                    path = config.configs.spider.contentdatapath + k + '=' + v + '/'
+                    path = configs.spider.contentdatapath + k + '=' + v + '/'
                     self.catalogueUrlRecursion(param, path, 1)
                 else:
                     Logger.error('param.txt gives an incorrect key compared to self.paramterList...')
@@ -223,7 +247,7 @@ class UrlQuerySpider(BaseSpider):
     def catalogueUrlRecursion(self, param, path, level):
         if not os.path.exists(path):
             os.makedirs(path)
-        Logger.info('(level %s)start to scrab param:%s' %(level, param))
+        Logger.info('(level %s)start to scrab param:%s' % (level, param))
         if not isinstance(self.queryList[level - 1], list):
             self.queryList[level - 1] = [self.queryList[level - 1]]
         for query in self.queryList[level - 1]:
@@ -248,14 +272,14 @@ class UrlQuerySpider(BaseSpider):
             if not isinstance(nextParamList[0], dict):
                 Logger.critical('contentHandler() should return list made by dict of each element. Espider is shutting down...')
                 exit(1)
-            writeLinesFile(path + 'param_query='+ query + '.txt', nextParamList)
+            writeLinesFile(path + 'param_query=' + query + '.txt', nextParamList)
             for nextParam in nextParamList:
                 for k,v in nextParam.items():
                     if k in self.parameterList[level]:
                         nextParamDict = dict(param)
                         nextParamDict[k] = v
                         nextPath = path + k + '=' + v + '/'
-                        time.sleep(random.random()*config.configs.http.sleeptime)
+                        time.sleep(random.random() * configs.http.sleeptime)
                         self.catalogueUrlRecursion(nextParamDict, nextPath, level + 1)
                     else:
                         pass
@@ -275,9 +299,6 @@ class UrlQuerySpider(BaseSpider):
         url = self.startUrl + query + '?' + '&'.join(queryList)
         return url
 
-    def buildExtraHeaders(self, url):
-        return (url, {})
-
 
 
     def checkUrlQuery(self):
@@ -296,10 +317,13 @@ class UrlQuerySpider(BaseSpider):
         self.level = len(self.queryList)
 
 class GsExtractor(object):
+    """
+        Helping class if you want to extract data with the method of xslt.
+        This is associated with GooSeeker tool.
+    """
     def _init_(self):
         self.xslt = ""
 
-    # 从文件读取xslt
     def setXsltFromFile(self , xsltFilePath):
         file = open(xsltFilePath , 'r' , encoding='utf8')
         try:
@@ -307,25 +331,21 @@ class GsExtractor(object):
         finally:
             file.close()
 
-    # 从字符串获得xslt
     def setXsltFromMem(self , xsltStr):
         self.xslt = xsltStr
 
-    # 通过GooSeeker API接口获得xslt
     def setXsltFromAPI(self , APIKey , theme, middle=None, bname=None):
-        apiurl = "http://www.gooseeker.com/api/getextractor?key="+ APIKey +"&theme="+quote(theme)
+        apiurl = "http://www.gooseeker.com/api/getextractor?key=" + APIKey + "&theme=" + quote(theme)
         if (middle):
-            apiurl = apiurl + "&middle="+quote(middle)
+            apiurl = apiurl + "&middle=" + quote(middle)
         if (bname):
-            apiurl = apiurl + "&bname="+quote(bname)
+            apiurl = apiurl + "&bname=" + quote(bname)
         apiconn = request.urlopen(apiurl)
         self.xslt = apiconn.read()
 
-    # 返回当前xslt
     def getXslt(self):
         return self.xslt
 
-    # 提取方法，入参是一个HTML DOM对象，返回是提取结果
     def extract(self , html):
         xslt_root = etree.XML(self.xslt)
         transform = etree.XSLT(xslt_root)

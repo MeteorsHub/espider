@@ -7,6 +7,9 @@
     -------------------------------------------------------
     include utilities fucntion
 
+    :Copyright (c) 2016 MeteorKepler
+    :license: MIT, see LICENSE for more details.
+
 """
 
 __author__ = 'MeteorKepler'
@@ -14,11 +17,20 @@ __author__ = 'MeteorKepler'
 from collections import Iterable
 import os
 
-from espider.log import *
+from espider.config import configs
+from espider.log import Logger
 
-__all__ = ('readLinesFile', 'writeLinesFile', 'getFileList', 'json_get')
+
+__all__ = ['readLinesFile', 
+           'writeLinesFile', 
+           'getFileList', 
+           'json_get',
+           ]
 
 def readLinesFile(filename, method = 'r'):
+    """
+        Read from a file and extract each line to the element of a list.
+    """
     dataInLine = []
     try:
         with open(filename, method, encoding='utf8') as f:
@@ -32,6 +44,9 @@ def readLinesFile(filename, method = 'r'):
     return dataInLine
 
 def writeLinesFile(filename, dataInLine, method = 'w'):
+    """
+        Write a list to the file. One element to one line.
+    """
     if not isinstance(dataInLine, Iterable):
         Logger.error('input illegal')
         return
@@ -46,6 +61,9 @@ def writeLinesFile(filename, dataInLine, method = 'w'):
     return
 
 def getFileList(dir):
+    """
+        Find all files in dir and its sub-dirs.
+    """
     if not os.path.exists(dir):
         os.makedirs(dir)
     fileList = []
@@ -61,6 +79,9 @@ def getFileList(dir):
     return fileList
 
 def json_get(js, key):
+    """
+        Find all element of key in json js, regardless of which level they are.
+    """
     if not isinstance(key, str):
         return None
     ret = []

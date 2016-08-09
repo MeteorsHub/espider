@@ -5,17 +5,29 @@
     espider.selephan
     ------------------------------------------------------------
 
-    This file is about use selenium and phantomJs to handle web page
+    This file is about use selenium and phantomJs to handle web page.
+    If your page is generated in JavaScript, this method will help you.
+
+    :Copyright (c) 2016 MeteorKepler
+    :license: MIT, see LICENSE for more details.
 
 """
 
 __author__ = 'MeterKepler'
+
 import urllib.request
 from selenium import webdriver
 from selenium.webdriver.common.proxy import Proxy as seleProxy
 from selenium.webdriver.common.proxy import ProxyType
 
 from espider.proxy import *
+from espider.config import configs
+from espider.log import Logger
+
+__all__ = [
+    'SelePhan',
+    'PhantomJsResponse',
+    ]
 
 
 class SelePhan(object):
@@ -29,9 +41,9 @@ class SelePhan(object):
             self.proxyList = esProxy.getProxyList()
             self.proxyCount = 0
         self.formProxy(self.proxyCount)
-        self.cap['phantomjs.page.settings.resourceTimeout'] = config.configs.selephan.timeout*1000
-        self.cap['phantomjs.page.settings.loadImages'] = config.configs.selephan.loadimages
-        self.cap['phantomjs.page.settings.userAgent'] = config.configs.urlrequest['User-Agent']
+        self.cap['phantomjs.page.settings.resourceTimeout'] = configs.selephan.timeout*1000
+        self.cap['phantomjs.page.settings.loadImages'] = configs.selephan.loadimages
+        self.cap['phantomjs.page.settings.userAgent'] = configs.urlrequest['User-Agent']
         self.driver = webdriver.PhantomJS(desired_capabilities=self.cap, proxy=self.proxy)
 
 

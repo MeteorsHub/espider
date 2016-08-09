@@ -5,9 +5,19 @@
     espider.conf.config_default.py
     ---------------------------------------------------------------------------------------
 
-    set up default config, if you wan't to change this, please change in config_override.py
+    Set up default config, if you wan't to change some configs, please do so in 
+    config_override.py in your project path.
+
+    :Copyright (c) 2016 MeteorKepler
+    :license: MIT, see LICENSE for more details.
 
 """
+
+__author__ = 'MeteorKepler'
+
+__all__ = [
+    'configs',
+    ]
 
 configs = {
     'logging':{
@@ -19,6 +29,7 @@ configs = {
     },
     'mysql':{
         'host':'localhost',
+        'port':3316,
         'user':'root',
         'password':'123456',
         'db':'espider',

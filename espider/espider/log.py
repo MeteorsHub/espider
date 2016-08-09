@@ -6,35 +6,42 @@
     espider.log
     -----------------------------------------------------------
 
-    Define logging used in espider
+    Define logging used in espider including console and file logging.
+
+    :Copyright (c) 2016 MeteorKepler
+    :license: MIT, see LICENSE for more details.
 
 """
 
 __author__ = 'MeterKepler'
 
-import logging
 import os
+import logging
 
-from espider import config
+from espider.config import configs
 
-# diffrent log formater
+__all__ = [
+    'Logger',
+    ]
+
+# Diffrent log formater, you can change this in configs
 formatter = ['%(asctime)s %(module)s %(levelname)s %(message)s',
              '%(levelname)s %(message)s',
              '%(asctime)s %(pathname)s %(module)s %(levelname)s %(message)s'
              ]
 
-logging.basicConfig(level=config.configs.logging.level,
-                    format=formatter[config.configs.logging.formatter_style])
+logging.basicConfig(level=configs.logging.level,
+                    format=formatter[configs.logging.formatter_style])
 
 Logger = logging.getLogger('')
 
-if config.configs.logging.filelog:
-    path, file = os.path.split(config.configs.logging.filename)
+if configs.logging.filelog:
+    path, file = os.path.split(configs.logging.filename)
     if not os.path.exists(path):
         os.makedirs(path)
-    filelog = logging.FileHandler(config.configs.logging.filename, config.configs.logging.filemode)
-    filelog.setFormatter(logging.Formatter(formatter[int(config.configs.logging.formatter_style)]))
-    filelog.setLevel(config.configs.logging.level)
+    filelog = logging.FileHandler(configs.logging.filename, configs.logging.filemode)
+    filelog.setFormatter(logging.Formatter(formatter[int(configs.logging.formatter_style)]))
+    filelog.setLevel(configs.logging.level)
 
     Logger.addHandler(filelog)
 

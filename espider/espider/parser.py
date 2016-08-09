@@ -5,7 +5,11 @@
     espider.parser
     ------------------------------------------------------------
 
-    This file is used to parse data from datafile that are scrab via spider
+    This module is used to parse data from datafile that are scrab via spider.
+
+
+    :Copyright (c) 2016 MeteorKepler
+    :license: MIT, see LICENSE for more details.
 
 """
 
@@ -15,15 +19,27 @@ import os
 import json
 from lxml import etree
 
-from espider.log import *
 from espider.util import *
+from espider.config import configs
+from espider.log import Logger
+
+__all__ = [
+    'BaseParser',
+    'HtmlParser',
+    'XmlParser',
+    'JsonParser',
+    ]
 
 
 class BaseParser(object):
+    """
+        Basic parser that provide saving data to file and mysql service.
+        The user must override function parseContent().
+    """
     parserName = ''
 
-    def __init__(self, contentType, primaryKey = None, contentPath = config.configs.spider.contentdatapath, openMethod = 'rb', openEncoding = None):
-        if parserName == '':
+    def __init__(self, contentType, primaryKey = None, contentPath = configs.spider.contentdatapath, openMethod = 'rb', openEncoding = None):
+        if self.parserName == '':
             Logger.warning('You should define parserName for your parser! Espider is shutting down...')
             exit(1)
         self.contentType = contentType
@@ -70,16 +86,19 @@ class BaseParser(object):
 
 
     def parseContent(self, data):
+        """
+            data is a bytes type variable, you should return a list with each element of dict type
+        """
         Logger.critical('parseContent() without override! espider is shuting down...')
         exit(1)
 
     def saveData(self):
-        if config.configs.parse.file:
+        if configs.parse.file:
             try:
                 dataList = []
                 try:
-                    if os.path.exists(config.configs.parse.contentpath + config.configs.parse.contentfile):
-                        dataList = readLinesFile(config.configs.parse.contentpath + config.configs.parse.contentfile)
+                    if os.path.exists(configs.parse.contentpath + configs.parse.contentfile):
+                        dataList = readLinesFile(configs.parse.contentpath + configs.parse.contentfile)
                         for i in range(len(dataList)):
                             try:
                                 self.addDataItem(json.loads(dataList[i]), self.primaryKey)
@@ -90,15 +109,15 @@ class BaseParser(object):
                 dataList = []
                 for item in self.dataList:
                     dataList.append(json.dumps(item, ensure_ascii = False))
-                writeLinesFile(config.configs.parse.contentpath + config.configs.parse.contentfile, dataList, method=config.configs.parse.savemethod)
+                writeLinesFile(configs.parse.contentpath + configs.parse.contentfile, dataList, method=configs.parse.savemethod)
             except Exception as e:
                 Logger.error('an error occured while saving data to file...', e)
-        if config.configs.parse.mysql:
+        if configs.parse.mysql:
             from espider.mysql import Mysql
             keyList = []
             for k in self.dataList[0]:
                 keyList.append(k)
-            mySql = Mysql(config.configs.mysql.table, keyList, primaryKey=self.primaryKey)
+            mySql = Mysql(configs.mysql.table, keyList, primaryKey=self.primaryKey)
             mySql.insertWithUpdate(self.dataList)
 
 
@@ -123,7 +142,7 @@ class BaseParser(object):
         return
 
 class HtmlParser(BaseParser):
-    def __init__(self, contentType = 'html', primaryKey = None, contentPath = config.configs.spider.contentdatapath, openMethod = 'r', openEncoding = 'utf8'):
+    def __init__(self, contentType = 'html', primaryKey = None, contentPath = configs.spider.contentdatapath, openMethod = 'r', openEncoding = 'utf8'):
         super(HtmlParser,self).__init__(contentType = contentType, primaryKey = primaryKey, contentPath = contentPath, openMethod = openMethod, openEncoding = openEncoding)
 
     def fileListFilter(self):
@@ -133,9 +152,9 @@ class HtmlParser(BaseParser):
         return
 
 class XmlParser(BaseParser):
-    def __init__(self, contentType = 'xml', contentPath = config.configs.spider.contentdatapath, openMethod = 'r', openEncoding = 'utf8'):
+    def __init__(self, contentType = 'xml', contentPath = configs.spider.contentdatapath, openMethod = 'r', openEncoding = 'utf8'):
         super(XmlParser,self).__init__(contentType = contentType, contentPath = contentPath, openMethod = openMethod, openEncoding = openEncoding)
 
 class JsonParser(BaseParser):
-    def __init__(self, contentType = 'json', contentPath = config.configs.spider.contentdatapath, openMethod = 'r', openEncoding = 'utf8'):
+    def __init__(self, contentType = 'json', contentPath = configs.spider.contentdatapath, openMethod = 'r', openEncoding = 'utf8'):
         super(XmlParser,self).__init__(contentType = contentType, contentPath = contentPath, openMethod = openMethod, openEncoding = openEncoding)
