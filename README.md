@@ -21,11 +21,11 @@ Some errors may occur running in different environment. Better capatibility will
 
 Espider uses some open sourse lib, you should install them before using.
 * pymysql:   
-Espider.parser will use pymysql to save data to mysql.  
-Try to install with pip:  
-```
-pip install pymysql
-```  
+    Espider.parser will use pymysql to save data to mysql.  
+    Try to install with pip:  
+    ```
+    pip install pymysql
+    ```  
 
 * selenium:  
     Espider can use selenium and PhantomJS to load web pages dynamicly. If need to load web page that is computed by JavaScript, this tool is best for you. For official desciption, please view [phantomjs](http://phantomjs.org/)
