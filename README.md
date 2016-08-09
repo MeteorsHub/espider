@@ -154,6 +154,10 @@ class demoParser(HtmlParser):
         return dataList
 ```  
 
+## Changelogs
+
+Refer to [CHANGEs.md](CHANGEs.md)
+
 ## Lisence
 
 The MIT License (MIT)
