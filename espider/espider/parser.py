@@ -17,7 +17,6 @@ __author__ = 'MeterKepler'
 
 import os
 import json
-from lxml import etree
 
 from espider.util import *
 from espider.config import configs

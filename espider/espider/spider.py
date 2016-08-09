@@ -21,7 +21,6 @@ import random
 import time
 from urllib.parse import urlparse, quote, urljoin, urlunparse
 from urllib import request
-from lxml import etree
 import json
 from collections import OrderedDict
 
@@ -322,6 +321,7 @@ class GsExtractor(object):
         This is associated with GooSeeker tool.
     """
     def _init_(self):
+        from lxml import etree
         self.xslt = ""
 
     def setXsltFromFile(self , xsltFilePath):

@@ -72,6 +72,6 @@ configs = {
         'contentpath':'pipeline/parsedData/',
         'contentfile':'dataDict.txt',
         'savemethod':'w+',
-        'mysql':True
+        'mysql':False
     }
 }
