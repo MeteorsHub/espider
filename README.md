@@ -3,6 +3,16 @@
 
 ![](https://github.com/MeteorKepler/espider/raw/master/artworks/spider-web.jpg)  
 
+## What's new?  
+
+>Version 0.1.1 is already released.  
+>- Adding most of the code comments, README files.  
+>- Begin to build docs that users could refer to.  
+>- Fix some bugs.  
+>- Optimize framework.  
+>
+>For more information, see in [CHANGES.md](CHANGES.md)
+
 ## What can I do with espider?  
 Espider can automaticly huge amount of scribe web sources with just a few lines of codes to design. It can use proxy and dynamic parsing method to handle ip restrict and anti-scribing issues.  
 Espider have two procedures-- web spider and content parser. Web spider wil start with a starting url and then use rules that you define to analyse catalogue and download all the required web source to you hard disk. Content parser wil parse stored web source and extract needed infomation to file or mysql.
