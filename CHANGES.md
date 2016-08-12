@@ -2,6 +2,10 @@
 
 >You can see the full list of changes between each espider version.  
 
+## version 0.1.3
+
+- Optimize the http connection performance and change default sleeptime from 1s to 0.4s. Now you can feel a higher speed of Espidering.
+
 ## version 0.1.2
 
 - New espider mode -- update mode.  
