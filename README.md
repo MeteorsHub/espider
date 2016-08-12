@@ -18,7 +18,7 @@ Espider can automaticly huge amount of scribe web sources with just a few lines 
 Espider have two procedures-- web spider and content parser. Web spider wil start with a starting url and then use rules that you define to analyse catalogue and download all the required web source to you hard disk. Content parser wil parse stored web source and extract needed infomation to file or mysql.
 Surpportted web source type includes html, xml, json, images like jpg, bmp, tif, videos like avi, mp4, audios like mp3. For furthor infomation, please refer to *TODO*  
 
-![](https://github.com/MeteorKepler/espider/raw/master/artworks/mainproc.jpg)  
+![](https://github.com/MeteorKepler/espider/raw/master/artworks/mainproc2.jpg)  
 
 ## Environment  
 Because of getting start with python not so familiarly and the project is just a begining, I have only tested the project in specific environment below. 
@@ -166,7 +166,7 @@ class demoParser(HtmlParser):
 
 ## Changelogs
 
-Refer to [CHANGEs.md](CHANGEs.md)
+Refer to [CHANGES.md](CHANGES.md)
 
 ## Lisence
 

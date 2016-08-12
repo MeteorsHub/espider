@@ -19,6 +19,7 @@ import os
 import shutil
 import random
 import time
+from datetime import datetime
 from urllib.parse import urlparse, quote, urljoin, urlunparse
 from urllib import request
 import json
@@ -28,6 +29,7 @@ from espider.httphandler import HttpHandler
 from espider.util import *
 from espider.config import configs
 from espider.log import Logger
+from espider.parser import *
 
 __all__ = [
     'BaseSpider',
@@ -43,9 +45,10 @@ class BaseSpider(object):
         You can also override buildExtraHeaders() but this is not necessary which aims to add 
         different headers according to different url.
     """
-    __slots__ = ('host', 'httpHandler', 'catalogueUrl', 'contentUrl', 'catalogueCount', 'contentCount')
+    __slots__ = ('host', 'httpHandler', 'catalogueUrl', 'contentDictList', 'catalogueCount', 'contentCount')
     espiderName = ''
     startUrl = ''
+    parser = None
 
     def __init__(self):
         Logger.info('espider %s initiating...' % self.espiderName)
@@ -62,21 +65,110 @@ class BaseSpider(object):
             os.makedirs(configs.spider.pipelinepath)
         self.catalogueUrl = set()
         self.catalogueCount = 0
-        self.contentUrl = set()
         self.contentCount = 0
+        self.contentDictList = []
+        
+
 
 
     def startEspider(self):
+        if configs.spider.mode != 'override' and configs.spider.mode != 'update':
+            Logger.error('Please verify spider.mode is override or update in configs. Spider will run in default mode(override)')
+        if configs.spider.mode == 'update' and self.parser == None:
+            Logger.error('Spider cannot run in update mode without a correct function setParser() defined. ')
+        Logger.info('Espider running in %s mode' %('override' if self.parser == None else 'update'))
+        if self.parser != None:
+            # update mode
+            self.backupUpdate()
+            self.contentDictList = self.loadContentDictList()
+
         Logger.info('start to get catalogue urls...')
         self.catalogueUrlRecursion(self.startUrl)
         writeLinesFile(configs.spider.cataloguefilename, self.catalogueUrl, method='w+')
-        writeLinesFile(configs.spider.contentfilename, self.contentUrl, method='w+')
         count = 0
-        for item in self.contentUrl:
+        for item in self.contentDictList:
             count = count + 1
-            self.contentHandler(item, count)
+            MD5, filepath = self.contentHandler(item['contentUrl'], count)
+            item['filepath'] = filepath
+            if 'MD5' in item:
+                if self.parser == None:
+                    item['update'] = 'disabled'
+                elif item['MD5'] == MD5:
+                    item['update'] = 'false'
+                else:
+                    item['update'] = 'true'
+                item['MD5'] = MD5
+            else:
+                if self.parser == None:
+                    item['update'] = 'disabled'
+                else:
+                    item['update'] = 'true'
+                item['MD5'] = MD5
+        self.saveContentUrlDictList()
+        self.saveContentUrlUpdate()
         Logger.info('espider complete the task!')
 
+    def setParser(self, parser):
+        if configs.spider.mode == 'override':
+            Logger.warning('Spider mode is override in configs. setParse() will be ignored. If you want to use update mode, change it in config_override')
+            return
+        if not isinstance(parser, BaseParser):
+            Logger.error('setParser() should have a BaseParser-like object input. Spider will scribe in override instead of update mode')
+            return
+        self.parser = parser
+
+    def loadContentDictList(self):
+        if not os.path.exists(configs.spider.contentfilename):
+            return []
+        dataList = readLinesFile(configs.spider.contentfilename)
+        dataDictList = []
+        try:
+            for item in dataList:
+                if item.startswith('#'):
+                    continue
+                t = {}
+                data = item.split('\t')
+                t['contentUrl'] = data[0]
+                t['MD5'] = data[1]
+                t['update'] = data[2]
+                t['filepath'] = data[3]
+                dataDictList.append(t)
+        except IndexError:
+            Logger.error('Loading contentfile error!')
+        return dataDictList
+
+    def backupUpdate(self):
+        if not os.path.exists(configs.spider.contentfilename):
+            return
+        if not os.path.exists(configs.spider.contentbackuppath):
+            os.makedirs(configs.spider.contentbackuppath)
+        now = datetime.now().strftime('%Y_%m_%d_%H_%M_%S_')
+        dstfilename = os.path.join(configs.spider.contentbackuppath, now + os.path.split(configs.spider.contentupdatefilename)[1])
+        try:
+            shutil.copy2(configs.spider.contentupdatefilename, dstfilename)
+        except IOError:
+            Logger.error('Cannot copy file to update path...')
+
+    def saveContentUrlDictList(self):
+        instruction = '# contentUrl\tMD5\tupdate\tfilepath'
+        dataList = []
+        dataList.append(instruction)
+        for item in self.contentDictList:
+            temp = '%s\t%s\t%s\t%s' %(item['contentUrl'], item['MD5'], item['update'], item['filepath'])
+            dataList.append(temp)
+        writeLinesFile(configs.spider.contentfilename, dataList, method='w+')
+
+    def saveContentUrlUpdate(self):
+        if self.parser == None:
+            return
+        instruction = '# contentUrl\tMD5\tupdate\tfilepath'
+        dataList = []
+        dataList.append(instruction)
+        for item in self.contentDictList:
+            if item['update'] == 'true':
+                temp = '%s\t%s\t%s\t%s' %(item['contentUrl'], item['MD5'], item['update'], item['filepath'])
+                dataList.append(temp)
+        writeLinesFile(configs.spider.contentupdatefilename, dataList, method='w+')
 
     def catalogueUrlRecursion(self, url):
         if configs.spider.catalogueLimit != 'inf':
@@ -103,11 +195,13 @@ class BaseSpider(object):
             for item in urllistContent:
                 self.contentCount = self.contentCount + 1
                 if configs.spider.contentLimit != 'inf':
-                    if self.contentCount >= configs.spider.contentLimit:
+                    if self.contentCount > configs.spider.contentLimit:
                         break
-                if not item in self.contentUrl:
+                if not keyValueInDictList('contentUrl', item, self.contentDictList):
                     Logger.debug('discover content url %s' % item)
-                    self.contentUrl.add(item)
+                    dictTemp = {}
+                    dictTemp['contentUrl'] = item
+                    self.contentDictList.append(dictTemp)
         if len(urllistCatalogue) == 0:
             return
         else:
@@ -130,7 +224,7 @@ class BaseSpider(object):
 
     def contentHandler(self, url, count):
         url = urljoin(self.host, url)
-        Logger.info('(%s%%)get content data from %s' % (round(100 * count / len(self.contentUrl), 2), url))
+        Logger.info('(%s%%)get content data from %s' % (round(100 * count / len(self.contentDictList), 2), url))
         data = None
         type = ''
         name = None
@@ -138,7 +232,7 @@ class BaseSpider(object):
             response = self.httpHandler.getResponseByUrl(url)
             if response == None:
                 Logger.warning('cannot get url %s. please check httphandler...' % url)
-                return
+                return ('disabled', 'disabled')
             try:
                 name = self.contentFileName(response)
                 data, type = self.contentResponseHandle(response)
@@ -148,23 +242,33 @@ class BaseSpider(object):
         if name == None:
             name = '%s.' % count + type
         if data == None:
-            return
+            return ('disabled', 'disabled')
         if not os.path.exists(configs.spider.contentdatapath):
             os.makedirs(configs.spider.contentdatapath)
+        if self.parser == None:
+            MD5 = buildMD5String(data)
+        else:
+            try:
+                parsedData = '%s' %self.parser.parseContent(data)
+                MD5 = buildMD5String(parsedData)
+            except Exception:
+                Logger.error('An error occured in parseContent()! Please check your code. Espider will use the whole file as update md5')
+                MD5 = buildMD5String(data)
+        filepath = configs.spider.contentdatapath + name
         try:
             if type == 'html' or type == 'xml' or type == 'json' or type == 'js' or type == 'css':
-                with open(configs.spider.contentdatapath + name, 'w+', encoding='utf8') as f:
+                with open(filepath, 'w+', encoding='utf8') as f:
                     f.write(data)
-                return
+                return (MD5, filepath)
             if type == 'jpg' or type == 'tif' or type == 'ico' or type == 'png' or type == 'bmp' or type == 'mp3' or type == 'avi' or type == 'mp4':
-                with open(configs.spider.contentdatapath + name, 'wb+') as f:
+                with open(filepath, 'wb+') as f:
                     f.write(data)
-                return
-            with open(configs.spider.contentdatapath + name, 'wb+') as f:
+                return (MD5, filepath)
+            with open(filepath, 'wb+') as f:
                 f.write(data)
         except OSError:
             Logger.error('anerrer occured when open %s' % configs.spider.contentdatapath + name)
-        return
+        return (MD5, filepath)
 
     def contentFileName(self, response):
         return None

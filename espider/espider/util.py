@@ -14,8 +14,9 @@
 
 __author__ = 'MeteorKepler'
 
-from collections import Iterable
 import os
+import hashlib
+from collections import Iterable
 
 from espider.config import configs
 from espider.log import Logger
@@ -25,6 +26,8 @@ __all__ = ['readLinesFile',
            'writeLinesFile', 
            'getFileList', 
            'json_get',
+           'keyValueInDictList',
+           'buildMD5String',
            ]
 
 def readLinesFile(filename, method = 'r'):
@@ -99,3 +102,26 @@ def json_get(js, key):
             if k == key:
                 ret.append(v)
     return ret
+
+def keyValueInDictList(key, value, dictList):
+    """
+        Return a boolean whether a key-value data in dictList
+        'dictList' is a list whose elements are dicts
+    """
+    if not isinstance(dictList, list):
+        return False
+    for item in dictList:
+        if not isinstance(item, dict):
+            continue
+        if key in item:
+            if value == item[key]:
+                return True
+    return False
+
+def buildMD5String(data):
+    md5 = hashlib.md5()
+    if isinstance(data, str):
+        md5.update(data.encode('utf8'))
+    if isinstance(data, bytes):
+        md5.update(data)
+    return md5.hexdigest()

@@ -15,8 +15,9 @@
 
 __author__ = 'MeterKepler'
 
-import os
 import json
+import os
+from collections import OrderedDict
 
 from espider.util import *
 from espider.config import configs
@@ -43,18 +44,19 @@ class BaseParser(object):
             exit(1)
         self.contentType = contentType
         self.contentPath = contentPath
-        self.fileList = getFileList(contentPath)
-        if len(self.fileList) == 0:
-            Logger.warning('there is no %s file in %s, please have a check' %(self.contentType, self.contentPath))
-            return
-        self.fileListFilter()
         self.openMethod = openMethod
         self.openEncoding = openEncoding
         self.dataList = []
         self.primaryValue = []
         self.primaryKey = primaryKey
+        self.contentPath = contentPath
 
     def startParseContent(self):
+        self.fileList = getFileList(self.contentPath)
+        if len(self.fileList) == 0:
+            Logger.warning('There is no %s file in %s, please have a check' %(self.contentType, self.contentPath))
+            return
+        self.fileListFilter()
         Logger.info('starting parsing content...')
         if len(self.fileList) == 0:
             return
@@ -122,23 +124,54 @@ class BaseParser(object):
 
 
     def addDataItem(self, item, primaryKey):
-        if primaryKey != None and primaryKey in item:
-            if item[primaryKey] not in self.primaryValue:
+        itemtemp = OrderedDict()
+        for k,v in item.items():
+            if isinstance(v, list):
+                if len(v) == 0:
+                    itemtemp[k] = ''
+                else:
+                    itemtemp[k] = v[0]
+            else:
+                itemtemp[k] = v
+        if primaryKey != None and primaryKey in itemtemp:
+            if itemtemp[primaryKey] not in self.primaryValue:
                 if self.primaryKey == None:
                     self.primaryKey = primaryKey
                 elif self.primaryKey != primaryKey:
                     Logger.critical('different primary key found in returned data. espider is shutting down...')
                     exit(1)
-                self.primaryValue.append(item[primaryKey])
-                self.dataList.append(item)
+                self.primaryValue.append(itemtemp[primaryKey])
+                self.dataList.append(itemtemp)
             return
-        self.dataList.append(item)
+        self.dataList.append(itemtemp)
 
     def fileListFilter(self):
+        if configs.spider.mode == 'update':
+            pass
         for i in range(len(self.fileList)):
             if os.path.splitext(self.fileList[i])[1] !='.' + self.contentType :
                 self.fileList.pop(i)
         return
+
+    def loadContentUpdateDictList(self):
+        if not os.path.exists(configs.spider.contentupdatefilename):
+            return []
+        dataList = readLinesFile(configs.spider.contentfilename)
+        fileList = []
+        try:
+            for item in dataList:
+                if item.startswith('#'):
+                    continue
+                t = {}
+                data = item.split('\t')
+                t['contentUrl'] = data[0]
+                t['MD5'] = data[1]
+                t['update'] = data[2]
+                t['filepath'] = data[3]
+                dataDictList.append(t)
+        except IndexError:
+            Logger.error('Loading contentfile error!')
+        return dataDictList
 
 class HtmlParser(BaseParser):
     def __init__(self, contentType = 'html', primaryKey = None, contentPath = configs.spider.contentdatapath, openMethod = 'r', openEncoding = 'utf8'):

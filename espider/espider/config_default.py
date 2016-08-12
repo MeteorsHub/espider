@@ -65,7 +65,10 @@ configs = {
         'pipelinepath':'pipeline/',
         'cataloguefilename':'pipeline/catalogueUrl.txt',
         'contentfilename':'pipeline/contentUrl.txt',
-        'contentdatapath':'pipeline/data/'
+        'contentupdatefilename':'pipeline/contentUpdateList.txt',
+        'contentbackuppath':'pipeline/backup/',
+        'contentdatapath':'pipeline/data/',
+        'mode':'override'
     },
     'parse':{
         'file':True,
