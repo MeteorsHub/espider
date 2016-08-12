@@ -147,31 +147,31 @@ class BaseParser(object):
 
     def fileListFilter(self):
         if configs.spider.mode == 'update':
-            pass
+            filelist = self.loadContentUpdateFileList()
+
         for i in range(len(self.fileList)):
-            if os.path.splitext(self.fileList[i])[1] !='.' + self.contentType :
+            if os.path.splitext(self.fileList[i])[1] !='.' + self.contentType:
                 self.fileList.pop(i)
+                continue
+            if configs.spider.mode == 'update':
+                if self.fileList[i] not in filelist:
+                    self.fileList.pop(i)
         return
 
-    def loadContentUpdateDictList(self):
+    def loadContentUpdateFileList(self):
         if not os.path.exists(configs.spider.contentupdatefilename):
             return []
-        dataList = readLinesFile(configs.spider.contentfilename)
+        dataList = readLinesFile(configs.spider.contentupdatefilename)
         fileList = []
         try:
             for item in dataList:
                 if item.startswith('#'):
                     continue
-                t = {}
                 data = item.split('\t')
-                t['contentUrl'] = data[0]
-                t['MD5'] = data[1]
-                t['update'] = data[2]
-                t['filepath'] = data[3]
-                dataDictList.append(t)
+                fileList.append(data[3])
         except IndexError:
-            Logger.error('Loading contentfile error!')
-        return dataDictList
+            Logger.error('Loading contentupdatefile error!')
+        return fileList
 
 class HtmlParser(BaseParser):
     def __init__(self, contentType = 'html', primaryKey = None, contentPath = configs.spider.contentdatapath, openMethod = 'r', openEncoding = 'utf8'):
