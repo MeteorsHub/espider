@@ -48,7 +48,7 @@ configs = {
         'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0'
     },
     'http':{
-        'sleeptime':1,
+        'sleeptime':0.4,
         'timeout':5,
         'retry':3,
         'proxy':False,

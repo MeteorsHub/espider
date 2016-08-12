@@ -21,6 +21,7 @@ __author__ = 'MeterKepler'
 import urllib.error
 import urllib.request
 from urllib.parse import urlparse
+import time
 
 from espider.proxy import Proxy
 from espider.config import configs
@@ -56,6 +57,7 @@ class HttpHandler(object):
             url is the website you want.
             headers is the dict you add dynamicly apart from that in configs
         """
+        begin = time.clock()
         if urlparse(url).hostname == None:
             Logger.error('url of request illegal! which is %s' %url)
             return None
@@ -66,6 +68,7 @@ class HttpHandler(object):
             req.add_header(k,v)
         flag = False
         for i in range(configs.http.retry):
+            Logger.debug('%s attempt' %(i+1))
             try:
                 if self.selephan != None:
                     response = self.selephan.getReqWithSel(req)
@@ -86,6 +89,8 @@ class HttpHandler(object):
                 break
             except Exception as e:
                 continue
+        end = time.clock()
+        Logger.debug('HTTP request time: %ss' %(end - begin))
         if flag:
             return response
         else:

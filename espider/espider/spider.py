@@ -239,6 +239,7 @@ class BaseSpider(object):
             except Exception as e:
                 Logger.error('an error occured in getUrlList(). if this take place very often, please check your code')
                 self.httpHandler.nextHandler()
+            break
         if name == None:
             name = '%s.' % count + type
         if data == None:
