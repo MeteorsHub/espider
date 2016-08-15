@@ -61,7 +61,7 @@ configs = {
         'loadimages':False
     },
     'spider':{
-        'retry':3,
+        'retry':5,
         'catalogueLimit':'inf',
         'contentLimit':'inf',
         'pipelinepath':'pipeline/',
@@ -71,6 +71,7 @@ configs = {
         'contentbackuppath':'pipeline/backup/',
         'contentdatapath':'pipeline/data/',
         'uncatchableurlfilename':'pipeline/uncatchable.txt',
+        'loadurllistfromfile':False,
         'mode':'override'
     },
     'parse':{

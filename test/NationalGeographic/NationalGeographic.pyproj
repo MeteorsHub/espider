@@ -22,6 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="config_override.py" />
     <Compile Include="NationalGeographic.py" />
   </ItemGroup>
   <PropertyGroup>

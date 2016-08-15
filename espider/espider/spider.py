@@ -83,9 +83,15 @@ class BaseSpider(object):
             self.contentDictList = self.loadContentDictList()
 
         Logger.info('start to get catalogue urls...')
-        self.catalogueUrlRecursion(self.startUrl)
-        writeLinesFile(configs.spider.cataloguefilename, self.catalogueUrl, method='w+')
+
+        if configs.spider.loadurllistfromfile:
+            self.loadCatalogueList()
+            self.contentDictList = self.loadContentDictList()
+        else:
+            self.catalogueUrlRecursion(self.startUrl)
+            writeLinesFile(configs.spider.cataloguefilename, self.catalogueUrl, method='w+')
         count = 0
+
         for item in self.contentDictList:
             count = count + 1
             MD5, filepath = self.contentHandler(item['contentUrl'], count)
@@ -219,6 +225,10 @@ class BaseSpider(object):
                     time.sleep(random.random() * configs.http.sleeptime)
                     self.catalogueUrlRecursion(item)
             return
+
+    def loadCatalogueList(self):
+        self.catalogueUrl = readLinesFile(configs.spider.cataloguefilename)
+        return
 
     def saveUncatchableUrl(self):
         if len(self.uncatchableUrlList) == 0:

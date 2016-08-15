@@ -55,6 +55,7 @@ class Proxy(object):
         else:
             self.proxyList = self.loadProxy()
         self.proxyList = list(filter(lambda x:abs(int(x['available'])) == 1, self.proxyList))
+        self.proxyList = list(filter(lambda x:float(x['ping']) < 2, self.proxyList))
         if len(self.proxyList) == 0:
             Logger.critical('There is no available proxy! espider is shuting down...')
             exit(1)

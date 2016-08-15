@@ -1,7 +1,8 @@
-//images.nationalgeographic.com/wpf/media-live/photos/000/184/cache/aquarius-laboratory-skerry_18486_600x450.jpg
-//images.nationalgeographic.com/wpf/media-live/photos/000/184/cache/penguin-observation-stenzel_18489_600x450.jpg
-//images.nationalgeographic.com/wpf/media-live/photos/000/184/cache/alvin-submersible-kristof_18485_600x450.jpg
-//images.nationalgeographic.com/wpf/media-live/photos/000/184/cache/monterey-bay-sea-otter-curtsinger_18488_600x450.jpg
-//images.nationalgeographic.com/wpf/media-live/photos/000/184/cache/diving-saucer-marden_18491_600x450.jpg
-//images.nationalgeographic.com/wpf/media-live/photos/000/186/cache/table-coral-nicklen_18655_600x450.jpg
-//images.nationalgeographic.com/wpf/media-live/photos/000/184/cache/giant-kelp-fronds-henry_18487_600x450.jpg
+# contentUrl	MD5	update	filepath
+//images.nationalgeographic.com/wpf/media-live/photos/000/184/cache/aquarius-laboratory-skerry_18486_600x450.jpg	e5a28f949ca12670beec26055c10029a	disabled	pipeline/data/1.jpg
+//images.nationalgeographic.com/wpf/media-live/photos/000/186/cache/table-coral-nicklen_18655_600x450.jpg	a9f96b1a8c36d05653261e6705fd94b6	disabled	pipeline/data/2.jpg
+//images.nationalgeographic.com/wpf/media-live/photos/000/184/cache/monterey-bay-sea-otter-curtsinger_18488_600x450.jpg	7a6f3dc26203daea12eff3f1f6366906	disabled	pipeline/data/3.jpg
+//images.nationalgeographic.com/wpf/media-live/photos/000/184/cache/penguin-observation-stenzel_18489_600x450.jpg	c743ca819b2c4e95d890bad69ccbee88	disabled	pipeline/data/4.jpg
+//images.nationalgeographic.com/wpf/media-live/photos/000/184/cache/alvin-submersible-kristof_18485_600x450.jpg	9492541bf891330bbc349fed436e5f3d	disabled	pipeline/data/5.jpg
+//images.nationalgeographic.com/wpf/media-live/photos/000/184/cache/giant-kelp-fronds-henry_18487_600x450.jpg	44884e6f025b10cc3b23359c2d391490	disabled	pipeline/data/6.jpg
+//images.nationalgeographic.com/wpf/media-live/photos/000/184/cache/diving-saucer-marden_18491_600x450.jpg	b6a5d1001b8dffb38887954406166439	disabled	pipeline/data/7.jpg
