@@ -6,6 +6,7 @@
 
 - Optimize the http connection performance and change default sleeptime from 1s to 0.4s. Now you can feel a higher speed of Espidering.  
 - Now each item in 'urlrequest' in configs can be a list and if so espider will choose in random. So that you can add a couple of substitutions of specific headers to avoid ip restrict.  
+- Now eapider will save urls that are not scrabed to file so that you can see and do something.  
 
 ## version 0.1.2
 
