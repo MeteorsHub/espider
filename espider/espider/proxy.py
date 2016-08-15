@@ -20,6 +20,7 @@ import os
 import time
 import urllib.error
 import urllib.request
+from random import randint
 
 from espider.util import readLinesFile, writeLinesFile
 from espider.config import configs

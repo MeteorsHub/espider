@@ -3,15 +3,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>2ff65fca-b6f9-44d3-948b-838c7996ce6e</ProjectGuid>
+    <ProjectGuid>939f92d7-2dbe-464c-add0-3b4687350a07</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>_500px.py</StartupFile>
+    <StartupFile>Yinyuetai.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>500px</Name>
-    <RootNamespace>500px</RootNamespace>
+    <Name>Yinyuetai</Name>
+    <RootNamespace>Yinyuetai</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,7 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="_500px.py" />
+    <Compile Include="Yinyuetai.py" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

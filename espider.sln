@@ -7,8 +7,6 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "espider", "espider\espider.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{860B498D-4201-423F-8590-7EF0654A2537}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "500px", "test\500px\500px.pyproj", "{2FF65FCA-B6F9-44D3-948B-838C7996CE6E}"
-EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "NationalGeographic", "test\NationalGeographic\NationalGeographic.pyproj", "{2459B694-9D0B-4223-AA79-05F42C384526}"
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Lianjia", "test\Lianjia\Lianjia.pyproj", "{4B6444FB-D249-4F1F-9437-CF8D18F04C2A}"
@@ -19,6 +17,8 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "LianjiaAppOldApi", "test\Li
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "LianjiaUpdateMode", "test\LianjiaUpdateMode\LianjiaUpdateMode.pyproj", "{41397873-AF1D-4319-9F81-1CA338D910F9}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Yinyuetai", "test\Yinyuetai\Yinyuetai.pyproj", "{939F92D7-2DBE-464C-ADD0-3B4687350A07}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +27,6 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F9A6B182-2AC3-4A41-AD0E-FBFAA6256626}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F9A6B182-2AC3-4A41-AD0E-FBFAA6256626}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2FF65FCA-B6F9-44D3-948B-838C7996CE6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2FF65FCA-B6F9-44D3-948B-838C7996CE6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2459B694-9D0B-4223-AA79-05F42C384526}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2459B694-9D0B-4223-AA79-05F42C384526}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B6444FB-D249-4F1F-9437-CF8D18F04C2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -39,16 +37,18 @@ Global
 		{D2BAE409-5087-41D8-A33C-5FE2712D18E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41397873-AF1D-4319-9F81-1CA338D910F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{41397873-AF1D-4319-9F81-1CA338D910F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{939F92D7-2DBE-464C-ADD0-3B4687350A07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{939F92D7-2DBE-464C-ADD0-3B4687350A07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{2FF65FCA-B6F9-44D3-948B-838C7996CE6E} = {860B498D-4201-423F-8590-7EF0654A2537}
 		{2459B694-9D0B-4223-AA79-05F42C384526} = {860B498D-4201-423F-8590-7EF0654A2537}
 		{4B6444FB-D249-4F1F-9437-CF8D18F04C2A} = {860B498D-4201-423F-8590-7EF0654A2537}
 		{FDC2409C-ADDD-454A-996E-470A1F3BC93E} = {860B498D-4201-423F-8590-7EF0654A2537}
 		{D2BAE409-5087-41D8-A33C-5FE2712D18E7} = {860B498D-4201-423F-8590-7EF0654A2537}
 		{41397873-AF1D-4319-9F81-1CA338D910F9} = {860B498D-4201-423F-8590-7EF0654A2537}
+		{939F92D7-2DBE-464C-ADD0-3B4687350A07} = {860B498D-4201-423F-8590-7EF0654A2537}
 	EndGlobalSection
 EndGlobal

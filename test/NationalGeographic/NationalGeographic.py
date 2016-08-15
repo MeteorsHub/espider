@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-    test/lianjia
+    test/NationalGeographic
     ------------------------------------------------------------
 
     This file is an example which scrab www.nationalgeographic.com
