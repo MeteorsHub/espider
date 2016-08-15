@@ -45,7 +45,7 @@ class BaseSpider(object):
         You can also override buildExtraHeaders() but this is not necessary which aims to add 
         different headers according to different url.
     """
-    __slots__ = ('host', 'httpHandler', 'catalogueUrl', 'contentDictList', 'catalogueCount', 'contentCount')
+    __slots__ = ('host', 'httpHandler', 'catalogueUrl', 'contentDictList', 'catalogueCount', 'contentCount', 'uncatchableUrlList')
     espiderName = ''
     startUrl = ''
     parser = None
@@ -67,7 +67,7 @@ class BaseSpider(object):
         self.catalogueCount = 0
         self.contentCount = 0
         self.contentDictList = []
-        
+        self.uncatchableUrlList = []
 
 
 
@@ -183,7 +183,7 @@ class BaseSpider(object):
                 Logger.warning('cannot get url %s. please check httphandler...' % url)
                 return
             try:
-                urllistCatalogue, urllistContent = self.getUrlList(response)
+                urllistCatalogue, urllistContent = self.getUrlList(response)               
                 break
             except ValueError:
                 Logger.critical('please verify your getUrlList() return 2 lists. espider is shutting down...')
@@ -191,6 +191,9 @@ class BaseSpider(object):
             except Exception as e:
                 Logger.error('an error occured in getUrlList(). if this take place often, please check your code')
                 self.httpHandler.nextHandler()
+                if i == configs.spider.retry - 1:
+                    self.uncatchableUrlList.append(url)
+                    self.saveUncatchableUrl()
         if(len(urllistContent) != 0):
             for item in urllistContent:
                 self.contentCount = self.contentCount + 1
@@ -217,6 +220,11 @@ class BaseSpider(object):
                     self.catalogueUrlRecursion(item)
             return
 
+    def saveUncatchableUrl(self):
+        if len(self.uncatchableUrlList) == 0:
+            return
+        writeLinesFile(configs.spider.uncatchableurlfilename, self.uncatchableUrlList, method='w+')
+
 
     def getUrlList(self, response):
         Logger.critical('getUrlList() without override! espider is shuting down...')
@@ -236,16 +244,21 @@ class BaseSpider(object):
             try:
                 name = self.contentFileName(response)
                 data, type = self.contentResponseHandle(response)
-                if data == None and type == None:
+                if data == None:
+                    Logger.debug('data == None')
                     raise Exception
-            except Exception as e:
+            except Exception:
                 Logger.error('an error occured in getUrlList(). if this take place very often, please check your code')
                 self.httpHandler.nextHandler()
+                if i == configs.spider.retry - 1:
+                    self.uncatchableUrlList.append(url)
+                    self.saveUncatchableUrl()
+                continue
             break
-        if name == None:
-            name = '%s.' % count + type
         if data == None:
             return ('disabled', 'disabled')
+        if name == None:
+            name = '%s.' % count + type
         if not os.path.exists(configs.spider.contentdatapath):
             os.makedirs(configs.spider.contentdatapath)
         if self.parser == None:
@@ -281,7 +294,7 @@ class BaseSpider(object):
 
     def contentResponseHandle(self, response):
         type = response.getheader('Content-Type')
-        if not contentAvailable(response):
+        if not self.contentAvailable(response):
             return (None, None)
         if type == 'text/html':
             return (response.read().decode('utf8'), 'html')
