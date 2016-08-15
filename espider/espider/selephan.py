@@ -12,6 +12,7 @@
     :license: MIT, see LICENSE for more details.
 
 """
+from random import randint
 
 __author__ = 'MeterKepler'
 
@@ -43,6 +44,8 @@ class SelePhan(object):
         self.formProxy(self.proxyCount)
         self.cap['phantomjs.page.settings.resourceTimeout'] = configs.selephan.timeout*1000
         self.cap['phantomjs.page.settings.loadImages'] = configs.selephan.loadimages
+        if isinstance(configs.urlrequest['User-Agent'], list):
+            userAgent = configs.urlrequest['User-Agent'][randint(0, len(configs.urlrequest['User-Agent']) - 1)]
         self.cap['phantomjs.page.settings.userAgent'] = configs.urlrequest['User-Agent']
         self.driver = webdriver.PhantomJS(desired_capabilities=self.cap, proxy=self.proxy)
 

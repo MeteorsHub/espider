@@ -110,6 +110,9 @@ class Proxy(object):
         """
         req = urllib.request.Request(self.startUrl)
         for k,v in configs.urlrequest.items():
+            if isinstance(v, list):
+                l = len(v)
+                v = v[randint(0, len(v) - 1)]
             req.add_header(k,v)
         Logger.info('test proxy list in %s' % configs.proxy.srcname)
         data = readLinesFile(configs.proxy.srcname)

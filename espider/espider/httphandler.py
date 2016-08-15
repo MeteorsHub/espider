@@ -15,6 +15,7 @@
     :license: MIT, see LICENSE for more details.
 
 """
+from random import randint
 
 __author__ = 'MeterKepler'
 
@@ -63,6 +64,9 @@ class HttpHandler(object):
             return None
         req = urllib.request.Request(url)
         for k,v in configs.urlrequest.items():
+            if isinstance(v, list):
+                l = len(v)
+                v = v[randint(0, len(v) - 1)]
             req.add_header(k,v)
         for k,v in headers.items():
             req.add_header(k,v)
