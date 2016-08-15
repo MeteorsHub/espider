@@ -169,6 +169,7 @@ class Proxy(object):
             self.proxyCount = self.proxyCount + 1
         return
 
+
     def loadDefaultProxy(self):
         """
             If not getting proxy from web source, Proxy will use default proxy list.

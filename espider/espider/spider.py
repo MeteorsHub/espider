@@ -236,6 +236,8 @@ class BaseSpider(object):
             try:
                 name = self.contentFileName(response)
                 data, type = self.contentResponseHandle(response)
+                if data == None and type == None:
+                    raise Exception
             except Exception as e:
                 Logger.error('an error occured in getUrlList(). if this take place very often, please check your code')
                 self.httpHandler.nextHandler()
@@ -279,6 +281,8 @@ class BaseSpider(object):
 
     def contentResponseHandle(self, response):
         type = response.getheader('Content-Type')
+        if not contentAvailable(response):
+            return (None, None)
         if type == 'text/html':
             return (response.read().decode('utf8'), 'html')
         if type == 'text/xml':
@@ -306,6 +310,12 @@ class BaseSpider(object):
         if type == 'video/mpeg4':
             return (response.read(), 'mp4')
         return (response.read(), '')
+
+    def contentAvailable(self, response):
+        """
+        You can override this method to check whether the content page is available
+        """
+        return True
 
 class UrlQuerySpider(BaseSpider):
     """
