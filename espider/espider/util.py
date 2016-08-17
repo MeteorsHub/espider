@@ -17,6 +17,7 @@ __author__ = 'MeteorKepler'
 import os
 import hashlib
 from collections import Iterable
+from http.client import HTTPResponse
 
 from espider.config import configs
 from espider.log import Logger
@@ -28,6 +29,7 @@ __all__ = ['readLinesFile',
            'json_get',
            'keyValueInDictList',
            'buildMD5String',
+           'EsResponse',
            ]
 
 def readLinesFile(filename, method = 'r'):
@@ -125,3 +127,39 @@ def buildMD5String(data):
     if isinstance(data, bytes):
         md5.update(data)
     return md5.hexdigest()
+
+class EsResponse(object):
+        """
+            Built to make http.client.HTTPResponse can be read several times.
+        """
+        def __init__(self, response):
+            self.data = b''
+            self.headers = []
+            self.code = ''
+            if response == None:
+                return
+            if not isinstance(response, HTTPResponse):
+                Logger.error('EsRequest error: wrong type of response')
+                return
+            self.data = response.read()
+            self.headers = response.getheaders()
+            self.code = response.getcode()
+            self.url = response.geturl()
+
+        def read(self):
+            return self.data
+
+        def getcode(self):
+            return self.code
+
+        def geturl(self):
+            return self.url
+
+        def getheaders(self):
+            return self.headers
+
+        def getheader(self, name, default=None):
+            for item in self.headers:
+                if name == item[0]:
+                    return item[1]
+            return default

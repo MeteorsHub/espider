@@ -25,6 +25,7 @@ from urllib import request
 import json
 from collections import OrderedDict
 
+
 from espider.httphandler import HttpHandler
 from espider.util import *
 from espider.config import configs
@@ -188,6 +189,7 @@ class BaseSpider(object):
             if response == None:
                 Logger.warning('cannot get url %s. please check httphandler...' % url)
                 return
+            response = EsResponse(response)
             try:
                 urllistCatalogue, urllistContent = self.getUrlList(response)               
                 break
@@ -251,13 +253,14 @@ class BaseSpider(object):
             if response == None:
                 Logger.warning('cannot get url %s. please check httphandler...' % url)
                 return ('disabled', 'disabled')
+            response = EsResponse(response)
             try:
-                
                 data, type = self.contentResponseHandle(response)
                 if data == None:
                     Logger.debug('data == None')
                     raise Exception
-                name = self.contentFileName(data)
+                
+                name = self.contentFileName(response)
             except Exception:
                 Logger.error('an error occured in getUrlList(). if this take place very often, please check your code')
                 self.httpHandler.nextHandler()
@@ -297,7 +300,7 @@ class BaseSpider(object):
             Logger.error('anerrer occured when open %s' % configs.spider.contentdatapath + name)
         return (MD5, filepath)
 
-    def contentFileName(self, data):
+    def contentFileName(self, response):
         return None
 
     def buildExtraHeaders(self, url):
@@ -490,3 +493,5 @@ class GsExtractor(object):
         transform = etree.XSLT(xslt_root)
         result_tree = transform(html)
         return result_tree
+
+    

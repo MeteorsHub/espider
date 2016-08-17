@@ -172,9 +172,10 @@ class HtmlParser(BaseParser):
         super(HtmlParser,self).__init__(contentType = contentType, primaryKey = primaryKey, contentPath = contentPath, openMethod = openMethod, openEncoding = openEncoding)
 
     def fileListFilter(self):
-        for i in range(len(self.fileList)):
-            if os.path.splitext(self.fileList[i])[1] not in ['.html', '.htm'] :
-                self.fileList.pop(i)
+        self.fileList = list(filter(lambda item:os.path.splitext(item)[1] in ['.html', '.htm'], self.fileList))
+        if configs.spider.mode == 'update':
+            filelist = self.loadContentUpdateFileList()
+            self.fileList = list(filter(lambda item:item in filelist, self.fileList))
         return
 
 class XmlParser(BaseParser):
