@@ -29,16 +29,13 @@ class YinyuetaiSpider(BaseSpider):
 
     def contentAvailable(self, response):
         data = response.read().decode('utf8')
-        if re.findall('<title>(.*)</title>', data) == []:
+        if re.findall('<title>(.*?)</title>', data) == []:
             return False
         return True
 
-    def contentFileName(self, data):
-        name = re.findall('<title>(.*)</title>', data)[0]
+    def contentFileName(self, response):
+        name = re.findall('<title>(.*?)</title>', response.read().decode('utf8'))[0]
         return name + '.html'
 
 mySpider = YinyuetaiSpider()
 mySpider.startEspider()
-
-import urllib.request
-a = urllib.request.urlopen(

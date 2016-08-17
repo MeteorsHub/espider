@@ -9,6 +9,7 @@
 - Now eapider will save urls that are not scrabed to file so that you can see and do something.  
 - Now the proxy list will ignore proxy with ping larger than 2 seconds.  
 - You can config whether to rescrab catalogue and content url from website or load from file. It's easier to restart from a interruption of your espider.
+- You can correctly define contentAvailable() and contentFileName() in spider. contentAvailable() is to find uncorrect content and contentFileName() is to modify the name of contentfile instead of default number. But remember to add extensions.  
 
 ## version 0.1.2
 
