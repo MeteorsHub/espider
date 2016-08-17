@@ -252,11 +252,12 @@ class BaseSpider(object):
                 Logger.warning('cannot get url %s. please check httphandler...' % url)
                 return ('disabled', 'disabled')
             try:
-                name = self.contentFileName(response)
+                
                 data, type = self.contentResponseHandle(response)
                 if data == None:
                     Logger.debug('data == None')
                     raise Exception
+                name = self.contentFileName(data)
             except Exception:
                 Logger.error('an error occured in getUrlList(). if this take place very often, please check your code')
                 self.httpHandler.nextHandler()
@@ -296,7 +297,7 @@ class BaseSpider(object):
             Logger.error('anerrer occured when open %s' % configs.spider.contentdatapath + name)
         return (MD5, filepath)
 
-    def contentFileName(self, response):
+    def contentFileName(self, data):
         return None
 
     def buildExtraHeaders(self, url):
@@ -306,31 +307,31 @@ class BaseSpider(object):
         type = response.getheader('Content-Type')
         if not self.contentAvailable(response):
             return (None, None)
-        if type == 'text/html':
+        if 'text/html' in type:
             return (response.read().decode('utf8'), 'html')
-        if type == 'text/xml':
+        if 'text/xml' in type:
             return (response.read().decode('utf8'), 'xml')
-        if type == 'application/json':
+        if 'application/json' in type:
             return (response.read().decode('utf8'), 'json')
-        if type == 'application/javascript' or type == 'application/ecmascript':
+        if 'application/javascript' in type or 'application/ecmascript' in type:
             return (response.read().decode('utf8'), 'js')
-        if type == 'image/jpeg':
+        if 'image/jpeg' in type:
             return (response.read(), 'jpg')
-        if type == 'image/tiff':
+        if 'image/tiff' in type:
             return (response.read(), 'tif')
-        if type == 'image/x-icon':
+        if 'image/x-icon' in type:
             return (response.read(), 'ico')
-        if type == 'image/png':
+        if 'image/png' in type:
             return (response.read(), 'png')
-        if type == 'text/css':
+        if 'text/css' in type:
             return (response.read().decode('utf8'), 'css')
-        if type == 'application/x-bmp':
+        if 'application/x-bmp' in type:
             return (response.read(), 'bmp')
-        if type == 'audio/mp3':
+        if 'audio/mp3' in type:
             return (response.read(), 'mp3')
-        if type == 'video/avi':
+        if 'video/avi' in type:
             return (response.read(), 'avi')
-        if type == 'video/mpeg4':
+        if 'video/mpeg4' in type:
             return (response.read(), 'mp4')
         return (response.read(), '')
 

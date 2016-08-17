@@ -146,16 +146,10 @@ class BaseParser(object):
         self.dataList.append(itemtemp)
 
     def fileListFilter(self):
+        self.fileList = list(filter(lambda item:os.path.splitext(item)[1] =='.' + self.contentType, self.fileList))
         if configs.spider.mode == 'update':
             filelist = self.loadContentUpdateFileList()
-
-        for i in range(len(self.fileList)):
-            if os.path.splitext(self.fileList[i])[1] !='.' + self.contentType:
-                self.fileList.pop(i)
-                continue
-            if configs.spider.mode == 'update':
-                if self.fileList[i] not in filelist:
-                    self.fileList.pop(i)
+            self.fileList = list(filter(lambda item:item in filelist, self.fileList))
         return
 
     def loadContentUpdateFileList(self):

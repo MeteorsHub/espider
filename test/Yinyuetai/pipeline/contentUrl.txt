@@ -1,0 +1,11 @@
+# contentUrl	MD5	update	filepath
+/article/neidi/25082	d41d8cd98f00b204e9800998ecf8427e	disabled	pipeline/data/1.html
+/article/neidi/25110	d41d8cd98f00b204e9800998ecf8427e	disabled	pipeline/data/2.html
+/article/neidi/25090	d41d8cd98f00b204e9800998ecf8427e	disabled	pipeline/data/3.html
+/article/neidi/25081	d41d8cd98f00b204e9800998ecf8427e	disabled	pipeline/data/4.html
+/article/neidi/25079	d41d8cd98f00b204e9800998ecf8427e	disabled	pipeline/data/5.html
+/article/neidi/25103	d41d8cd98f00b204e9800998ecf8427e	disabled	pipeline/data/6.html
+/article/neidi/25083	d41d8cd98f00b204e9800998ecf8427e	disabled	pipeline/data/7.html
+/article/neidi/25093	d41d8cd98f00b204e9800998ecf8427e	disabled	pipeline/data/8.html
+/article/neidi/25088	d41d8cd98f00b204e9800998ecf8427e	disabled	pipeline/data/9.html
+/article/neidi/25101	d41d8cd98f00b204e9800998ecf8427e	disabled	pipeline/data/10.html
